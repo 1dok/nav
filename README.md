@@ -342,8 +342,7 @@ npx wrangler d1 execute book --local --file=schema.sql
 public/index.html
 
 找到主内容区的 header：
-
-<header class="{{HEADER_CLASS}} text-white py-10 px-6 md:px-10 shadow-sm">
+`<header class="{{HEADER_CLASS}} text-white py-10 px-6 md:px-10 shadow-sm">`
 
 将它改成：
 
