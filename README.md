@@ -341,13 +341,8 @@ npx wrangler d1 execute book --local --file=schema.sql
 自定义壁纸横线改善：
 public/index.html
 
-找到主内容区的 header：
-`<header class="{{HEADER_CLASS}} text-white py-10 px-6 md:px-10 shadow-sm">`
-
-将它改成：
-
-修改后的代码
-<header class="{{HEADER_CLASS}} text-white py-10 px-6 md:px-10">
+找到主内容区的 header：`<header class="{{HEADER_CLASS}} text-white py-10 px-6 md:px-10 shadow-sm">`
+修改后的代码：         `<header class="{{HEADER_CLASS}} text-white py-10 px-6 md:px-10">`
 
 这一步的核心只有一个：删除固定的 shadow-sm。
 其他类名不要动。
