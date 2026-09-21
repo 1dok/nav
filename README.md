@@ -338,7 +338,7 @@ npx wrangler d1 execute book --local --file=schema.sql
 
 [![Star History Chart](https://star-history.dera.page/svg?repos=jy02739244/iori-nav)](https://star-history.dera.page/#jy02739244/iori-nav)
 
-自定义壁纸横线改善：
+## **2026/09/21 自定义壁纸横线改善**
 public/index.html
 
 找到主内容区的 header：
