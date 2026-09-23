@@ -353,7 +353,7 @@ public/index.html
 这一步的核心只有一个：删除固定的 shadow-sm。
 其他类名不要动。
 
-# 2026/09/23 AbleOrbits 网站名称与图标修改、更新指南
+## 2026/09/23 AbleOrbits 网站名称与图标修改、更新指南
 
 本文记录如何修改 AbleOrbits 网站的浏览器标签页名称、Favicon 图标，以及正确部署和刷新缓存的方法。
 
@@ -363,7 +363,7 @@ GitHub 仓库：https://github.com/1dok/nav
 
 ---
 
-## 一、需要修改的内容与文件
+### 一、需要修改的内容与文件
 
 | 修改内容              | 文件或配置位置                          |
 | ----------------- | -------------------------------- |
@@ -374,9 +374,9 @@ GitHub 仓库：https://github.com/1dok/nav
 
 注意：浏览器标签页名称、首页显示名称、导航卡片名称可能是不同的配置项，修改前应确认具体目标。
 
-## 二、修改浏览器标签页名称
+### 二、修改浏览器标签页名称
 
-### 1. 打开文件
+**1. 打开文件**
 
 进入 GitHub 仓库：
 
@@ -394,7 +394,7 @@ public/index.html
 <title>{{SITE_NAME}} - 探索 · 连接 · 成长</title>
 ```
 
-### 2. 确认网站名称配置
+**2. 确认网站名称配置**
 
 `{{SITE_NAME}}` 是模板变量，不是固定文字。
 
@@ -412,9 +412,9 @@ ableorbits - 探索 · 连接 · 成长
 
 保留模板变量即可，不必将其改成固定文字。
 
-## 三、修改浏览器图标（Favicon）
+### 三、修改浏览器图标（Favicon）
 
-### 1. 准备图标
+**1. 准备图标**
 
 图标文件位置：
 
@@ -431,13 +431,13 @@ public/favicon.svg
 * 避免复杂渐变、细小纹理和过多细节。
 * 确保缩小到 16×16、32×32 像素时仍然容易辨认。
 
-### 2. 替换 SVG 文件
+**2. 替换 SVG 文件**
 
 在 GitHub 中上传新的 `favicon.svg`，覆盖旧文件。
 
 仅修改本地文件而没有提交到 GitHub，不会更新线上网站。
 
-### 3. 更新图标版本号
+**3. 更新图标版本号**
 
 在 `public/index.html` 中找到：
 
@@ -455,7 +455,7 @@ public/favicon.svg
 
 注意：`?v=2` 和 `?v=148aafdf` 是同一个文件路径附带不同的查询参数，并不代表两个独立的 SVG 文件。
 
-## 四、正确部署修改
+### 四、正确部署修改
 
 修改完成后：
 
@@ -475,9 +475,9 @@ Cloudflare Pages 项目：
 nav
 ```
 
-## 五、重要经验：部署成功后，首页仍可能显示旧内容
+### 五、重要经验：部署成功后，首页仍可能显示旧内容
 
-### 1. 原因
+**1. 原因**
 
 项目除了 Cloudflare Pages 部署，还使用 `NAV_AUTH` KV 缓存已经渲染好的首页 HTML。
 
@@ -504,7 +504,8 @@ NAV_AUTH KV 首页 HTML 缓存
 
 这属于首页 KV 缓存没有及时失效，不一定是部署失败或浏览器缓存问题。
 
-### 2. 项目已有缓存刷新机制
+**2. 项目已有缓存刷新机制**
+
 
 在 `functions/api/settings.js` 中，保存相关网站设置时会执行：
 
@@ -531,7 +532,7 @@ markHomeCacheDirty(env, 'all')
 
 下一次访问首页时，Worker 可以重新渲染 HTML，并更新缓存。
 
-## 六、如何刷新首页缓存
+### 六、如何刷新首页缓存
 
 修改 HTML 模板、标题或图标并完成部署后：
 
@@ -560,7 +561,7 @@ home_site_name = ableorbits
 
 **不需要为了刷新首页缓存而修改 `_middleware.js`。** 当前项目已经包含相应的缓存失效机制。
 
-## 七、验证更新是否成功
+### 七、验证更新是否成功
 
 打开：
 
@@ -568,7 +569,7 @@ https://www.ableorbits.com/
 
 按 `F12` 打开浏览器开发者工具，在 Console 中执行以下命令。
 
-### 1. 检查浏览器标签页名称
+**1. 检查浏览器标签页名称**
 
 ```js
 document.title
@@ -580,7 +581,7 @@ document.title
 ableorbits - 探索 · 连接 · 成长
 ```
 
-### 2. 检查 Favicon 地址
+**2. 检查 Favicon 地址**
 
 ```js
 document.querySelector('link[rel="icon"]')?.outerHTML
@@ -592,7 +593,7 @@ document.querySelector('link[rel="icon"]')?.outerHTML
 <link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml">
 ```
 
-### 3. 检查 SVG 文件
+**3. 检查 SVG 文件**
 
 直接访问：
 
@@ -604,7 +605,7 @@ https://www.ableorbits.com/favicon.svg?v=3
 
 如果 Console 仍然显示旧的标题或图标 URL，应优先检查首页 KV 缓存是否已刷新。
 
-## 八、日常更新检查清单
+### 八、日常更新检查清单
 
 * [ ] 修改 GitHub 中正确的文件。
 * [ ] 提交修改并确认 Cloudflare Pages 部署成功。
@@ -613,7 +614,7 @@ https://www.ableorbits.com/favicon.svg?v=3
 * [ ] 检查 `document.title` 和 Favicon 链接。
 * [ ] 必要时再清除浏览器缓存。
 
-## 九、总结
+### 九、总结
 
 以后更新 AbleOrbits 网站名称或图标，按照以下顺序操作：
 
