@@ -353,11 +353,11 @@ public/index.html
 这一步的核心只有一个：删除固定的 shadow-sm。
 其他类名不要动。
 
-## 2026/09/23 AbleOrbits 网站名称与图标修改、更新指南
+## 2026/09/23 xxx 网站名称与图标修改、更新指南
 
-本文记录如何修改 AbleOrbits 网站的浏览器标签页名称、Favicon 图标，以及正确部署和刷新缓存的方法。
+本文记录如何修改 xxx 网站的浏览器标签页名称、Favicon 图标，以及正确部署和刷新缓存的方法。
 
-网站地址：https://www.ableorbits.com/
+网站地址：https://www.xxx.com/
 
 GitHub 仓库：https://github.com/1dok/nav
 
@@ -401,13 +401,13 @@ public/index.html
 后台设置：
 
 ```text
-home_site_name = ableorbits
+home_site_name = xxx
 ```
 
 如果希望浏览器标签页显示：
 
 ```text
-ableorbits - 探索 · 连接 · 成长
+xxx - 探索 · 连接 · 成长
 ```
 
 保留模板变量即可，不必将其改成固定文字。
@@ -546,13 +546,13 @@ markHomeCacheDirty(env, 'all')
 例如，原设置为：
 
 ```text
-home_site_name = ableorbits
+home_site_name = xxx
 ```
 
 可以临时改为其他值并保存，再恢复为：
 
 ```text
-home_site_name = ableorbits
+home_site_name = xxx
 ```
 
 并再次保存。
@@ -565,7 +565,7 @@ home_site_name = ableorbits
 
 打开：
 
-https://www.ableorbits.com/
+https://www.xxx.com/
 
 按 `F12` 打开浏览器开发者工具，在 Console 中执行以下命令。
 
@@ -578,7 +578,7 @@ document.title
 预期结果：
 
 ```text
-ableorbits - 探索 · 连接 · 成长
+xxx - 探索 · 连接 · 成长
 ```
 
 **2. 检查 Favicon 地址**
@@ -598,7 +598,7 @@ document.querySelector('link[rel="icon"]')?.outerHTML
 直接访问：
 
 ```text
-https://www.ableorbits.com/favicon.svg?v=3
+https://www.xxx.com/favicon.svg?v=3
 ```
 
 确认显示的是新图标。
@@ -616,7 +616,7 @@ https://www.ableorbits.com/favicon.svg?v=3
 
 ### 九、总结
 
-以后更新 AbleOrbits 网站名称或图标，按照以下顺序操作：
+以后更新 xxx 网站名称或图标，按照以下顺序操作：
 
 ```text
 修改文件
