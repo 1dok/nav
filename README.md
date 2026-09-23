@@ -352,3 +352,283 @@ public/index.html
 ```
 这一步的核心只有一个：删除固定的 shadow-sm。
 其他类名不要动。
+
+# 2026/09/23 AbleOrbits 网站名称与图标修改、更新指南
+
+本文记录如何修改 AbleOrbits 网站的浏览器标签页名称、Favicon 图标，以及正确部署和刷新缓存的方法。
+
+网站地址：https://www.ableorbits.com/
+
+GitHub 仓库：https://github.com/1dok/nav
+
+---
+
+## 一、需要修改的内容与文件
+
+| 修改内容              | 文件或配置位置                          |
+| ----------------- | -------------------------------- |
+| 浏览器标签页名称          | `public/index.html` 中的 `<title>` |
+| 浏览器标签页图标（Favicon） | `public/favicon.svg`             |
+| 首页显示的网站名称         | 后台设置 `home_site_name`            |
+| 导航卡片中的网站名称、图标     | 对应的网站数据或后台配置                     |
+
+注意：浏览器标签页名称、首页显示名称、导航卡片名称可能是不同的配置项，修改前应确认具体目标。
+
+## 二、修改浏览器标签页名称
+
+### 1. 打开文件
+
+进入 GitHub 仓库：
+
+https://github.com/1dok/nav
+
+打开：
+
+```text
+public/index.html
+```
+
+找到 `<head>` 中的标题：
+
+```html
+<title>{{SITE_NAME}} - 探索 · 连接 · 成长</title>
+```
+
+### 2. 确认网站名称配置
+
+`{{SITE_NAME}}` 是模板变量，不是固定文字。
+
+后台设置：
+
+```text
+home_site_name = ableorbits
+```
+
+如果希望浏览器标签页显示：
+
+```text
+ableorbits - 探索 · 连接 · 成长
+```
+
+保留模板变量即可，不必将其改成固定文字。
+
+## 三、修改浏览器图标（Favicon）
+
+### 1. 准备图标
+
+图标文件位置：
+
+```text
+public/favicon.svg
+```
+
+如果从 PNG 转换成 SVG 后出现扭曲或失真，可以重新设计一个更适合矢量化的简洁图标。
+
+建议：
+
+* 使用简单几何形状。
+* 采用清晰、较粗的轮廓。
+* 避免复杂渐变、细小纹理和过多细节。
+* 确保缩小到 16×16、32×32 像素时仍然容易辨认。
+
+### 2. 替换 SVG 文件
+
+在 GitHub 中上传新的 `favicon.svg`，覆盖旧文件。
+
+仅修改本地文件而没有提交到 GitHub，不会更新线上网站。
+
+### 3. 更新图标版本号
+
+在 `public/index.html` 中找到：
+
+```html
+<link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml">
+```
+
+每次更换图标时，可以递增版本号：
+
+```html
+<link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml">
+```
+
+版本号用于缓存控制。修改 URL 中的版本参数，可以减少浏览器继续使用旧图标缓存的情况。
+
+注意：`?v=2` 和 `?v=148aafdf` 是同一个文件路径附带不同的查询参数，并不代表两个独立的 SVG 文件。
+
+## 四、正确部署修改
+
+修改完成后：
+
+1. 在 GitHub 中保存并提交修改。
+2. 确认 Cloudflare Pages 已经成功部署最新提交。
+3. 确认部署使用的是正确的 GitHub 仓库和分支。
+
+当前网站使用的仓库：
+
+```text
+1dok/nav
+```
+
+Cloudflare Pages 项目：
+
+```text
+nav
+```
+
+## 五、重要经验：部署成功后，首页仍可能显示旧内容
+
+### 1. 原因
+
+项目除了 Cloudflare Pages 部署，还使用 `NAV_AUTH` KV 缓存已经渲染好的首页 HTML。
+
+首页请求大致经过以下流程：
+
+```text
+public/index.html
+       ↓
+functions/index.js 渲染
+       ↓
+NAV_AUTH KV 首页 HTML 缓存
+       ↓
+浏览器访问首页
+```
+
+修改并部署 `public/index.html` 后，KV 中已经保存的旧首页 HTML 不会自动随 GitHub 文件更新。
+
+因此可能出现：
+
+* GitHub 源码已经更新。
+* Cloudflare Pages 已经部署成功。
+* 新的 `favicon.svg` 可以直接访问。
+* 但首页仍然返回旧的标题和图标地址。
+
+这属于首页 KV 缓存没有及时失效，不一定是部署失败或浏览器缓存问题。
+
+### 2. 项目已有缓存刷新机制
+
+在 `functions/api/settings.js` 中，保存相关网站设置时会执行：
+
+```js
+if (touchesRenderedSettings) {
+  try {
+    await Promise.all([
+      env.NAV_AUTH.delete('settings_cache'),
+      markHomeCacheDirty(env, 'all'),
+    ]);
+  } catch (e) {
+    console.warn('Failed to clear caches:', e);
+  }
+}
+```
+
+其中：
+
+```js
+markHomeCacheDirty(env, 'all')
+```
+
+会标记公开和登录状态下的首页缓存需要重新生成。
+
+下一次访问首页时，Worker 可以重新渲染 HTML，并更新缓存。
+
+## 六、如何刷新首页缓存
+
+修改 HTML 模板、标题或图标并完成部署后：
+
+1. 登录网站后台。
+2. 找到一个会触发首页缓存刷新的网站设置。
+3. 保存设置。
+4. 再访问首页，检查更新结果。
+
+之前实际验证过：通过修改并保存 `home_site_name`，可以触发缓存刷新。
+
+例如，原设置为：
+
+```text
+home_site_name = ableorbits
+```
+
+可以临时改为其他值并保存，再恢复为：
+
+```text
+home_site_name = ableorbits
+```
+
+并再次保存。
+
+注意：操作前确认设置项的作用，避免影响网站实际显示。
+
+**不需要为了刷新首页缓存而修改 `_middleware.js`。** 当前项目已经包含相应的缓存失效机制。
+
+## 七、验证更新是否成功
+
+打开：
+
+https://www.ableorbits.com/
+
+按 `F12` 打开浏览器开发者工具，在 Console 中执行以下命令。
+
+### 1. 检查浏览器标签页名称
+
+```js
+document.title
+```
+
+预期结果：
+
+```text
+ableorbits - 探索 · 连接 · 成长
+```
+
+### 2. 检查 Favicon 地址
+
+```js
+document.querySelector('link[rel="icon"]')?.outerHTML
+```
+
+预期结果类似：
+
+```html
+<link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml">
+```
+
+### 3. 检查 SVG 文件
+
+直接访问：
+
+```text
+https://www.ableorbits.com/favicon.svg?v=3
+```
+
+确认显示的是新图标。
+
+如果 Console 仍然显示旧的标题或图标 URL，应优先检查首页 KV 缓存是否已刷新。
+
+## 八、日常更新检查清单
+
+* [ ] 修改 GitHub 中正确的文件。
+* [ ] 提交修改并确认 Cloudflare Pages 部署成功。
+* [ ] 如果修改了图标，递增 `favicon.svg` 的 `?v=` 版本号。
+* [ ] 通过后台保存设置触发首页缓存刷新。
+* [ ] 检查 `document.title` 和 Favicon 链接。
+* [ ] 必要时再清除浏览器缓存。
+
+## 九、总结
+
+以后更新 AbleOrbits 网站名称或图标，按照以下顺序操作：
+
+```text
+修改文件
+   ↓
+提交 GitHub
+   ↓
+Cloudflare Pages 部署成功
+   ↓
+刷新首页 KV 缓存
+   ↓
+浏览器验证
+```
+
+**最重要的经验：Cloudflare Pages 部署成功，不代表 KV 中缓存的首页 HTML 已经更新。**
+
+如果首页仍显示旧的标题或图标地址，应先检查缓存失效机制，而不是反复修改 `index.html` 或清除浏览器缓存。
